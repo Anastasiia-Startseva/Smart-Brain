@@ -1,14 +1,13 @@
 "use client"
 
-import { useNotes } from '@/src/store/use-notes'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useEffect } from 'react'
+import { AIToolbar } from './ai-toolbar'
+import { useNotes } from '@/src/store/use-notes'
 
 export function Editor() {
   const { notes, activeNoteId, updateNote } = useNotes()
-  
-  // данные текущей активной заметки
   const activeNote = notes.find((n) => n.id === activeNoteId)
 
   const editor = useEditor({
@@ -20,12 +19,17 @@ export function Editor() {
       },
     },
     onUpdate: ({ editor }) => {
-      // в стор при каждом изменении
       if (activeNoteId) {
         updateNote(activeNoteId, activeNote?.title || '', editor.getHTML())
       }
     },
   })
+
+  const insertAIContent = (content: string) => {
+    if (editor) {
+      editor.commands.insertContent(`<div style="color: #4f46e5; border-left: 2px solid #4f46e5; padding-left: 10px;">${content}</div>`)
+    }
+  }
 
   useEffect(() => {
     if (editor && activeNote && editor.getHTML() !== activeNote.content) {
@@ -38,6 +42,8 @@ export function Editor() {
   return (
     <div className="flex-1 h-full overflow-y-auto bg-white">
       <div className="max-w-3xl mx-auto py-16 px-10">
+        <AIToolbar onInsertContent={insertAIContent} />
+
         <input
           type="text"
           value={activeNote.title}
@@ -45,7 +51,6 @@ export function Editor() {
           className="w-full text-4xl font-bold mb-8 border-none outline-none placeholder:text-slate-200"
           placeholder="Заголовок заметки..."
         />
-        {/* Область текста */}
         <EditorContent editor={editor} />
       </div>
     </div>
