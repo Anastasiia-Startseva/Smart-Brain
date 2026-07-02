@@ -1,35 +1,42 @@
 "use client"
 
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import { useEffect } from 'react'
-import { AIToolbar } from './ai-toolbar'
-import { useNotes } from '@/src/store/use-notes'
+import { useEditor, EditorContent } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import Placeholder from "@tiptap/extension-placeholder"
+import { useEffect } from "react"
+import { AIToolbar } from "./ai-toolbar"
+import { useNotes } from "@/src/store/use-notes"
 
 export function Editor() {
   const { notes, activeNoteId, updateNote } = useNotes()
-  const activeNote = notes.find((n) => n.id === activeNoteId)
+  const activeNote = notes.find((note) => note.id === activeNoteId)
 
   const editor = useEditor({
-    extensions: [StarterKit],
-    content: activeNote?.content || '',
+    extensions: [
+      StarterKit,
+      Placeholder.configure({
+        placeholder: "Начните писать заметку...",
+      }),
+    ],
+    content: activeNote?.content || "",
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: 'prose prose-sm focus:outline-none max-w-none min-h-screen text-base px-2 py-4 text-slate-900',
+        class:
+          "prose prose-sm dark:prose-invert focus:outline-none max-w-none text-base text-slate-900 dark:text-slate-100",
       },
     },
-    onUpdate: ({ editor }) => {
+    onUpdate: ({ editor: currentEditor }) => {
       if (activeNoteId) {
-        updateNote(activeNoteId, activeNote?.title || '', editor.getHTML())
+        updateNote(activeNoteId, activeNote?.title || "", currentEditor.getHTML())
       }
     },
   })
 
   const insertAIContent = (content: string) => {
-    if (editor) {
-      editor.commands.insertContent(`<div style="color: #4f46e5; border-left: 3px solid #4f46e5; padding-left: 12px; margin: 12px 0; background: #eef2ff; padding: 12px; border-radius: 6px;">${content}</div>`)
-    }
+    editor?.commands.insertContent(
+      `<blockquote><p><strong>AI:</strong> ${content}</p></blockquote>`,
+    )
   }
 
   useEffect(() => {
@@ -41,19 +48,22 @@ export function Editor() {
   if (!activeNote) return null
 
   return (
-    <div className="flex-1 h-full overflow-y-auto bg-white">
-      <div className="max-w-4xl mx-auto">
-        <div className="sticky top-0 bg-white border-b border-slate-200 p-4 z-10">
+    <div className="h-full flex-1 overflow-y-auto bg-white dark:bg-slate-900">
+      <div className="mx-auto max-w-4xl">
+        <div className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 p-3 backdrop-blur sm:p-4 dark:border-slate-700 dark:bg-slate-900/95">
           <AIToolbar onInsertContent={insertAIContent} />
         </div>
-        
-        <div className="px-8 py-6">
+
+        <div className="prose-editor px-4 py-6 sm:px-8">
           <input
             type="text"
             value={activeNote.title}
-            onChange={(e) => updateNote(activeNoteId!, e.target.value, activeNote.content)}
-            className="w-full text-4xl font-bold mb-8 border-none outline-none placeholder:text-slate-300 text-slate-900"
+            onChange={(event) =>
+              updateNote(activeNoteId!, event.target.value, activeNote.content)
+            }
+            className="mb-8 w-full border-none bg-transparent text-3xl font-bold text-slate-900 outline-none placeholder:text-slate-300 sm:text-4xl dark:text-slate-50 dark:placeholder:text-slate-600"
             placeholder="Заголовок заметки..."
+            aria-label="Заголовок заметки"
           />
           <EditorContent editor={editor} />
         </div>

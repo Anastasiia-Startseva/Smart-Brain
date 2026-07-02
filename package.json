@@ -6,12 +6,27 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
   },
+  "author": "Anastasiia Startseva",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Anastasiia-Startseva/Smart-Brain.git"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "typescript",
+    "ai",
+    "notes",
+    "portfolio"
+  ],
   "dependencies": {
     "@ai-sdk/openai": "^4.0.5",
     "@ai-sdk/react": "^4.0.12",
     "@base-ui/react": "^1.6.0",
+    "@tiptap/extension-placeholder": "^3.27.1",
     "@tiptap/pm": "^3.27.1",
     "@tiptap/react": "^3.27.1",
     "@tiptap/starter-kit": "^3.27.1",
