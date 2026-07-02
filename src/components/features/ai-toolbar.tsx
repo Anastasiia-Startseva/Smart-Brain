@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Sparkles, Wand2, FileText, CheckCheck } from "lucide-react"
+import { Sparkles, Wand2, FileText, CheckCheck, Loader2 } from "lucide-react"
 import { useChat } from '@ai-sdk/react'
 import { useNotes } from '@/src/store/use-notes'
 
@@ -42,38 +42,45 @@ export function AIToolbar({ onInsertContent }: AIToolbarProps) {
   }
 
   return (
-    <div className="flex gap-2 p-2 mb-4 bg-slate-50 border rounded-lg animate-in fade-in slide-in-from-top-2">
-      <div className="flex items-center gap-2 px-2 text-xs font-medium text-slate-500 border-r mr-2">
-        <Sparkles className="w-3 h-3 text-indigo-500" />
+    <div className="flex gap-2 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-lg animate-in slide-in-from-top-2">
+      <div className="flex items-center gap-2 px-3 text-xs font-semibold text-indigo-600 border-r border-indigo-200 pr-3">
+        <Sparkles className="w-4 h-4" />
         AI Магия
       </div>
       
       <Button 
-        variant="ghost" size="sm" className="h-8 text-xs gap-2"
+        variant="ghost" 
+        size="sm" 
+        className="h-8 text-xs gap-2 hover:bg-white hover:text-indigo-700"
         onClick={() => runCommand("Исправь грамматические ошибки")}
-        disabled={isLoading}
+        disabled={isLoading || !activeNote}
       >
-        <CheckCheck className="w-3 h-3" /> Исправить ошибки
+        <CheckCheck className="w-4 h-4" /> Исправить
       </Button>
 
       <Button 
-        variant="ghost" size="sm" className="h-8 text-xs gap-2"
+        variant="ghost" 
+        size="sm" 
+        className="h-8 text-xs gap-2 hover:bg-white hover:text-indigo-700"
         onClick={() => runCommand("Сделай краткую выжимку (summary)")}
-        disabled={isLoading}
+        disabled={isLoading || !activeNote}
       >
-        <FileText className="w-3 h-3" /> Саммари
+        <FileText className="w-4 h-4" /> Саммари
       </Button>
 
       <Button 
-        variant="ghost" size="sm" className="h-8 text-xs gap-2"
+        variant="ghost" 
+        size="sm" 
+        className="h-8 text-xs gap-2 hover:bg-white hover:text-indigo-700"
         onClick={() => runCommand("Перепиши в более профессиональном стиле")}
-        disabled={isLoading}
+        disabled={isLoading || !activeNote}
       >
-        <Wand2 className="w-3 h-3" /> Проф. стиль
+        <Wand2 className="w-4 h-4" /> Профессионально
       </Button>
 
       {isLoading && (
-        <div className="ml-auto flex items-center text-[10px] text-indigo-600 animate-pulse font-medium px-2">
+        <div className="ml-auto flex items-center gap-2 text-xs text-indigo-600 font-semibold px-3">
+          <Loader2 className="w-3 h-3 animate-spin" />
           AI работает...
         </div>
       )}

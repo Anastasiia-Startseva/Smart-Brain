@@ -1,16 +1,27 @@
 import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { streamText, convertToModelMessages, type UIMessage } from 'ai';
 
 export const runtime = 'edge';
-
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  const { messages, context }: { messages: UIMessage[]; context?: string } =
+    await req.json();
 
-  const result = await streamText({
+  const system = [
+    'Ты — умный помощник SmartBrain. Пиши кратко и по делу.',
+    context
+      ? `Вот текущая заметка пользователя, учитывай её при ответе:\n\n${context}`
+      : null,
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+
+  const convertedMessages = await convertToModelMessages(messages);
+
+  const result = streamText({
     model: openai('gpt-4o'),
-    messages,
-    system: 'Ты — умный помощник SmartBrain. Пиши кратко и по делу.',
+    system,
+    messages: convertedMessages,
   });
 
-  return result.toTextStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
