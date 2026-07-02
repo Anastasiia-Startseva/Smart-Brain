@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SmartBrain
 
-## Getting Started
+**SmartBrain** — портфолио-проект: AI-приложение для заметок с rich-text редактором, чатом и быстрыми командами редактирования.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![React](https://img.shields.io/badge/React-19-61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC)
+
+## Demo
+
+> Добавьте ссылку на деплой после публикации на Vercel.
+
+## Возможности
+
+- **Rich-text редактор** на базе TipTap (StarterKit)
+- **AI-чат** с контекстом текущей заметки
+- **AI-команды**: исправление, саммари, профессиональный стиль
+- **Поиск** по заголовку и содержимому заметок
+- **Локальное хранение** через Zustand + localStorage
+- **Тёмная тема** и адаптивная вёрстка (desktop / mobile)
+- **Горячие клавиши**: `Ctrl+N` — новая заметка, `Ctrl+K` — поиск
+
+## Стек
+
+| Категория | Технологии |
+|-----------|------------|
+| Framework | Next.js 16 (App Router) |
+| UI | React 19, Tailwind CSS 4, shadcn/ui |
+| State | Zustand (persist) |
+| Editor | TipTap |
+| AI | Vercel AI SDK, OpenAI API |
+| Language | TypeScript |
+
+## Быстрый старт
 
 ```bash
+git clone https://github.com/Anastasiia-Startseva/Smart-Brain.git
+cd Smart-Brain
+npm install
+cp .env.example .env.local
+# добавьте OPENAI_API_KEY в .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Переменные окружения
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Переменная | Описание |
+|------------|----------|
+| `OPENAI_API_KEY` | API-ключ OpenAI для AI-чата и команд |
 
-## Learn More
+## Скрипты
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev      # dev-сервер
+npm run build    # production-сборка
+npm run start    # запуск production
+npm run lint     # ESLint
+npm run typecheck # проверка TypeScript
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Структура проекта
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/                 # App Router, API routes, стили
+├── components/
+│   ├── features/        # Editor, AI Chat, AI Toolbar
+│   └── shared/          # Sidebar, dialogs, mobile header
+├── hooks/               # theme, shortcuts, mobile sidebar
+├── lib/                 # утилиты для заметок
+└── store/               # Zustand store
+components/ui/           # shadcn/ui компоненты
+```
 
-## Deploy on Vercel
+## Автор
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Anastasiia Startseva** — Frontend Developer (Junior+)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- GitHub: [@Anastasiia-Startseva](https://github.com/Anastasiia-Startseva)
+
+## Лицензия
+
+MIT
