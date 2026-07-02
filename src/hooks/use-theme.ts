@@ -1,37 +1,54 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useSyncExternalStore } from "react"
 
 type Theme = "light" | "dark"
 
-function getInitialTheme(): Theme {
+let currentTheme: Theme | null = null
+const listeners = new Set<() => void>()
+
+function resolveTheme(): Theme {
   if (typeof window === "undefined") return "light"
 
-  const stored = localStorage.getItem("smart-brain-theme") as Theme | null
-  if (stored === "light" || stored === "dark") return stored
+  if (currentTheme) return currentTheme
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  const stored = localStorage.getItem("smart-brain-theme") as Theme | null
+  if (stored === "light" || stored === "dark") {
+    currentTheme = stored
+  } else {
+    currentTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light"
+  }
+
+  document.documentElement.classList.toggle("dark", currentTheme === "dark")
+  return currentTheme
+}
+
+function subscribe(onStoreChange: () => void) {
+  listeners.add(onStoreChange)
+  return () => listeners.delete(onStoreChange)
+}
+
+function notifyThemeChange() {
+  listeners.forEach((listener) => listener())
 }
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>("light")
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    const initial = getInitialTheme()
-    setTheme(initial)
-    document.documentElement.classList.toggle("dark", initial === "dark")
-    setMounted(true)
-  }, [])
+  const theme = useSyncExternalStore(subscribe, resolveTheme, () => "light")
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  )
 
   const toggleTheme = useCallback(() => {
-    setTheme((current) => {
-      const next: Theme = current === "light" ? "dark" : "light"
-      localStorage.setItem("smart-brain-theme", next)
-      document.documentElement.classList.toggle("dark", next === "dark")
-      return next
-    })
-  }, [])
+    const nextTheme: Theme = theme === "light" ? "dark" : "light"
+    currentTheme = nextTheme
+    localStorage.setItem("smart-brain-theme", nextTheme)
+    document.documentElement.classList.toggle("dark", nextTheme === "dark")
+    notifyThemeChange()
+  }, [theme])
 
   return { theme, toggleTheme, mounted }
 }
